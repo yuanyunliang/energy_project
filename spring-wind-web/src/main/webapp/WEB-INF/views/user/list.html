@@ -1,0 +1,167 @@
+#override("title")
+SpringWind - 用户管理
+#end
+#override("css")
+<link href="#springUrl('/static/css/plugins/bootstrap-table/bootstrap-table.min.css')" rel="stylesheet">
+#end
+#override("breadcrumb")
+<li><a>权限管理</a></li><li class="active"><strong>用户管理</strong></li>
+#end
+#override("content")
+<div class="row">
+	<div class="ibox-content text-right form-inline" style="background: #F3F3F4;">
+		<div class="input-group">
+			<input type="text" class="form-control">
+			<span class="input-group-btn">
+				<button type="button" class="btn btn-info">搜索</button>
+			</span>
+		</div>
+		<button class="btn btn-primary" onclick="editUser(null)" type="button">
+		<i class="fa fa-pencil"></i>&nbsp;添加用户</button>
+	</div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <table id="dataTable">
+
+		</table>
+    </div>
+</div>
+#end
+#override("js")
+<script src="#springUrl('/static/js/plugins/bootstrap-table/bootstrap-table.min.js')"></script>
+<script src="#springUrl('/static/js/plugins/bootstrap-table/bootstrap-table-mobile.min.js')"></script>
+<script src="#springUrl('/static/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js')"></script>
+<script src="#springUrl('/static/plugins/layer-v2.2/layer/layer.js')"></script>
+<script src="#springUrl('/static/js/base_list.js')"></script>
+<script src="#springUrl('/static/js/common.js')"></script>
+<script type="text/javascript">
+    var dataUrl = "#springUrl('/perm/admin/getUserList.html')";
+    var dataColumns = [{
+        field: 'id',
+        title: '序号'
+    }, {
+        field: 'userInfo.name',
+        title: '登录名'
+    }, {
+        field: 'freeze',
+        title: '状态'
+    },{
+        field: 'userInfo.phone',
+        title: '联系电话'
+    },{
+        field: 'userInfo.money',
+		title: '余额'
+	},{
+        title: '操作',
+        formatter: function (value, row, index) {
+            var isFreeze = row.freeze;
+            var id = row.id;
+            if (isFreeze == '0') {
+                return '<a class="btn btn-xs btn-warning" onclick="editUser(' + "'" + id + "'" + ')"><i class="fa fa-pencil"></i>编辑</a> '
+                <!-- 此处按钮级别权限控制,目前只有 adminInfo 拥有该权限！ -->
+                #if($SSOPermission.isActionable("10010"))
+                + '<a class="btn btn-xs btn-danger" onclick="delUser(' + "'" + id + "'" + ')"><i class="fa fa-remove"></i>删除</a>&nbsp;'
+                + '<a class="btn btn-xs btn-info" onclick="freezeUser(' + "'" + id + "'" + ')" id="contentInfo">冻结</a>'
+                #end;
+			} else {
+                return '<a class="btn btn-xs btn-warning" onclick="editUser(' + "'" + id + "'" + ')"><i class="fa fa-pencil"></i>编辑</a> '
+                <!-- 此处按钮级别权限控制,目前只有 adminInfo 拥有该权限！ -->
+                #if($SSOPermission.isActionable("10010"))
+                + '<a class="btn btn-xs btn-danger" onclick="delUser(' + "'" + id + "'" + ')"><i class="fa fa-remove"></i>删除</a>&nbsp;'
+                + '<a class="btn btn-xs btn-info" onclick="reFreezeUser(' + "'" + id + "'" + ')" id="contentInfo">解冻</a>'
+                #end;
+			}
+        }
+    }
+    ];
+    function dataQueryParams(params) {
+        return {
+            _size: params.limit,  //页面大小
+            _index: params.offset, //页码
+        };
+    }
+    function freezeUser(userId) {
+        //询问框
+        layer.confirm('确定冻结该用户吗？', {
+            btn: ['确定', '取消'] //按钮
+        }, function () {
+            $.ajax({
+                type: "POST",
+                url: "#springUrl('/perm/admin/doFreeze/')" + userId,
+                datatype: "text",
+                success: function (data) {
+                    if(data == 'true'){
+                        $('#dataTable').bootstrapTable('refresh',{url:dataUrl});
+                    }
+                    layer.closeAll();
+                }
+            });
+        }, function () {
+            return;
+        });
+    }
+
+    function reFreezeUser(userId) {
+        //询问框
+        layer.confirm('确定解冻该用户吗？', {
+            btn: ['确定', '取消'] //按钮
+        }, function () {
+            $.ajax({
+                type: "POST",
+                url: "#springUrl('/perm/admin/reFreeze/')" + userId,
+                datatype: "text",
+                success: function (data) {
+                    if(data == 'true'){
+                        $('#dataTable').bootstrapTable('refresh',{url:dataUrl});
+                    }
+                    layer.closeAll();
+                }
+            });
+        }, function () {
+            return;
+        });
+    }
+
+    function delUser(userId) {
+        //询问框
+        layer.confirm('确定删除吗？', {
+            btn: ['确定', '取消'] //按钮
+        }, function () {
+            $.ajax({
+                type: "POST",
+                url: "#springUrl('/perm/adminInfo/delUser/')" + userId,
+                datatype: "text",
+                success: function (data) {
+                    if(data == 'true'){
+                        $('#dataTable').bootstrapTable('refresh',{url:dataUrl});
+                    }
+                    layer.closeAll();
+                }
+            });
+        }, function () {
+            return;
+        });
+    }
+
+function editUser(id){
+   	var title = "新增用户";
+   	var url = "#springUrl('/perm/adminInfo/edit.html')";
+   	if(id!=null){
+   		title = "编辑用户";
+   		url = url + "?id=" + id;
+   	}
+    layer.open({
+        type: 2,
+        title: title,
+        shadeClose: true,
+        shade: 0.8,
+        area: ['600px', '430px'],
+        fix: false,
+        maxmin: true,
+        content: url
+    });
+}
+</script>
+#end
+#extends("/common/framework.html")

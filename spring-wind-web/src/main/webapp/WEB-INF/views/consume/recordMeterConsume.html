@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>模拟用户用电信息上链</title>
+    <link rel="stylesheet" href="#springUrl('/layui/css/layui.css')">
+</head>
+<body class="layui-layout-body" style="background-color: #f3f3f4;height: 100%">
+
+    <div class="layui-layout layui-layout-admin" >
+        <div class="layui-header">
+            <div class="layui-logo" style="padding-left: 0%">能源链 EnergyChain</div>
+            <!-- 头部区域（可配合layui已有的水平导航） -->
+            <ul class="layui-nav layui-layout-left" style="padding-left: 0%">
+                <li class="layui-nav-item">
+                    <a href="javascript:;">帐户余额管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="#springUrl('/pay/goPayPage')">帐户充值</a></dd>
+                        <dd><a href="#springUrl('/pay/goQueryRecordUserPayPage')">充值记录</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">帐户退款管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="#springUrl('/refund/goApplyRefundPage')">申请退款</a></dd>
+                        <dd><a href="#springUrl('/refund/queryRefundUI')">退款记录</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item"><a href="#springUrl('/userConsume/recordMeterConsumeUI')">模拟用户用电上链</a></li>
+            </ul>
+
+            <ul class="layui-nav layui-layout-right" style="margin-right: 0%">
+                <li class="layui-nav-item">
+                    <a href="javascript:;">
+                        <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                        贤心
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="">基本资料</a></dd>
+                        <dd><a href="">安全设置</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item"><a href="">退出登录</a></li>
+            </ul>
+        </div>
+
+        <div class="layui-container" >
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>用户用电信息模拟上链</legend>
+            </fieldset>
+            <form class="layui-form" action="ad" method="post" id="pay">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户电表id</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="meterId" name="meterId" lay-verify="required"  autocomplete="off" placeholder="请输入用户电表id" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">公司id</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="companyId" name="companyId" lay-verify="required" autocomplete="off" placeholder="请输入公司id" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">耗电量</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="electricity" name="electricity" lay-verify="number" autocomplete="off" placeholder="请输入耗电量" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">开始时间</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="startTime" name="startTime"  autocomplete="off" placeholder="请选择开始消耗时间" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">结束时间</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="endTime" name="endTime"  autocomplete="off" placeholder="请选择结束消耗时间" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit="" lay-filter="module">确认上链</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+    <script src="#springUrl('/layui/layui.js')"></script>
+    <script>
+        var $;
+        var layer;
+        var form;
+        var element;
+        layui.use(['form','jquery','layer','element','laydate'], function () {
+            var laydate = layui.laydate;
+            // 获取form模块
+            form = layui.form;
+            // 获取layui内置的jquery
+            $ = layui.jquery;
+            layer = layui.layer;
+            element = layui.element;
+
+            //日期时间选择器
+            laydate.render({
+                elem: '#startTime'
+                ,type: 'datetime'
+            });
+
+            //日期时间选择器
+            laydate.render({
+                elem: '#endTime'
+                ,type: 'datetime'
+            });
+
+            // 监听提交
+            form.on('submit(module)',function (data) {
+                // 获取用户电表id
+                var meterId = $("#meterId").val();
+                // 获取公司id
+                var companyId =  $("#companyId").val();
+                // 获取耗电量
+                var electricity = $("#electricity").val();
+                // 获取开始时间
+                var startTime = $("#startTime").val();
+                // 获取结束时间
+                var endTime = $("#endTime").val();
+                $.ajax({
+                    type:'post',
+                    url: "#springUrl('/userConsume/add')",
+                    data:{"meterId": meterId, "companyId": companyId, "electricity": electricity, "startTimed": startTime, "endTimed": endTime},
+                    success:function(data){//返回json结果
+                        // 保存成功
+                        if (data.code == 1001) {
+                            layer.msg(data.message, {
+                                offset: '100px',
+                                anim: 4
+                            });
+
+                        } else if (data.code == 1002) {
+                            // 保存失败
+                            layer.msg(data.message, {
+                                offset: '100px',
+                                anim: 4
+                            });
+                        }
+                    }
+                });
+                // 阻止页面提交
+                return false;
+            })
+
+        })
+    </script>
+</body>
+</html>

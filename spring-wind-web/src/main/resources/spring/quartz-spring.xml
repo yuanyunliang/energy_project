@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns="http://www.springframework.org/schema/beans"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- 引入对象 -->
+	<bean id="quartzTest" class="com.baomidou.springwind.quartz.QuartzTest"/>
+
+	<!-- 1、制定任务详情信息 -->
+	<bean id="jobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<!-- 设置执行对象 -->
+		<property name="targetObject" ref="quartzTest"/>
+		<!-- 设置执行方法 -->
+		<property name="targetMethod" value="quartz"/>
+		<!-- 设置是否并发执行 -->
+		<property name="concurrent" value="false"/>
+	</bean>
+
+	<!-- 2、制定任务调度触发器（执行时机） -->
+	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<!-- 设置任务详细信息 -->
+		<property name="jobDetail" ref="jobDetail"/>
+		<!-- 设置执行时机 (秒 分 时 日 月 周 年（可选）) -->
+		<property name="cronExpression" value="0 0 */1 * * ?"/>
+	</bean>
+
+	<!-- 3、设置任务调度工厂（设置触发器） -->
+	<bean id="schedulerFactory" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="cronTrigger"/>
+			</list>
+		</property>
+	</bean>
+</beans>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baomidou.springwind.mapper.AlternatorMapper">
+
+    <resultMap id="base" type="com.baomidou.springwind.entity.Alternator">
+        <result property="alternatorId" column="alternator_id"/>
+        <result property="companyId" column="company_id"/>
+    </resultMap>
+
+    <!--<select id="selectAllAlternators" resultMap="com.baomidou.springwind.entity.Alternator">-->
+        <!--SELECT * FROM alternator;-->
+    <!--</select>-->
+
+</mapper>

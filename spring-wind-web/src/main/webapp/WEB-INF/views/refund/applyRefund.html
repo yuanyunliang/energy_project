@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>申请退款</title>
+    <link rel="stylesheet" href="#springUrl('/layui/css/layui.css')">
+</head>
+<body class="layui-layout-body" style="background-color: #f3f3f4;height: 100%">
+
+<div class="layui-layout layui-layout-admin" >
+    <div class="layui-header">
+        <div class="layui-logo" style="padding-left: 0%">能源链 EnergyChain</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left" style="padding-left: 0%">
+            <li class="layui-nav-item">
+                <a href="javascript:;">帐户余额管理</a>
+                <dl class="layui-nav-child">
+                    <dd><a href="#springUrl('/pay/goPayPage')">帐户充值</a></dd>
+                    <dd><a href="#springUrl('/pay/goQueryRecordUserPayPage')">充值记录</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item">
+                <a href="javascript:;">帐户退款管理</a>
+                <dl class="layui-nav-child">
+                    <dd><a href="#springUrl('/refund/goApplyRefundPage')">申请退款</a></dd>
+                    <dd><a href="#springUrl('/refund/queryRefundUI')">退款记录</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="#springUrl('/userConsume/recordMeterConsumeUI')">模拟用户用电上链</a></li>
+        </ul>
+
+        <ul class="layui-nav layui-layout-right" style="margin-right: 0%">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                    贤心
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">基本资料</a></dd>
+                    <dd><a href="">安全设置</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="">退出登录</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-container" >
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>申请退款</legend>
+        </fieldset>
+        <form class="layui-form" action="ad" method="post" id="pay">
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">退款金额</label>
+                <div class="layui-input-block">
+                    <input type="text" id="refundAmount" name="refundAmount" lay-verify="number" autocomplete="off" placeholder="请输入退款金额" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">收款账号</label>
+                <div class="layui-input-block">
+                    <input type="text" id="refundAccount" name="refundAccount" lay-verify="number" autocomplete="off" placeholder="请输入退款账号" class="layui-input">
+                </div>
+            </div>
+
+            <input type="hidden" name="userId" id="userId" value="null"/>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">账号类型</label>
+                <div class="layui-input-block">
+                    <img src="#springUrl('/layui/img/alipay.png')" width="60" height="34">
+                    <input type="radio" name="refundAccountType" value="0" title="支付宝" checked="">
+                    <img src="#springUrl('/layui/img/wxpay.png')" width="34" height="34" style="margin-right: 10px">
+                    <input type="radio" name="refundAccountType" value="1" title="微信" >
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit="" lay-filter="module">申请退款</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+<script src="#springUrl('/layui/layui.js')"></script>
+<script>
+    var $;
+    var layer;
+    var form;
+    var element;
+    layui.use(['form','jquery','layer','element'], function () {
+        // 获取form模块
+        form = layui.form;
+        // 获取layui内置的jquery
+        $ = layui.jquery;
+        layer = layui.layer;
+        element = layui.element;
+        // 监听提交
+        form.on('submit(module)',function (data) {
+            // 获取退款的用户id
+            var userId = $("#userId").val();
+            // 获取退款金额
+            var refundAmount = $("#refundAmount").val();
+            if (refundAmount <= 0) {
+                layer.msg("退款金额需要大于0元", {
+                    offset: '100px',
+                    anim: 4
+                });
+                return false;
+            }
+            $.ajax({
+                type:'post',
+                url:"#springUrl('/user/getMoney')",
+                data:{"id": userId},
+                success:function(data){//返回json结果
+                    // 退款金额大于余额，不允许申请退款
+                    if (refundAmount > data) {
+                        layer.msg("帐户余额不足", {
+                            offset: '100px',
+                            anim: 4
+                        });
+                    } else {
+                        // 退款金额小于或等于帐户余额，允许申请退款
+                        applyRefund();
+                    }
+
+                }
+            });
+            // 阻止页面提交
+            return false;
+        })
+    })
+
+    function applyRefund() {
+        // 获取退款账号类型
+        var refundAccountType = $("input[name='refundAccountType']:checked").val();
+        // 获取退款的用户id
+        var userId = $("#userId").val();
+        // 获取退款金额
+        var refundAmount = $("#refundAmount").val();
+        // 获取退款账号
+        var refundAccount = $("#refundAccount").val();
+        $.ajax({
+            type:'post',
+            url:"#springUrl('/refund/applyRefund')",
+            data:{"refundAccountType": refundAccountType, "userId": userId, "refundAmount": refundAmount, "refundAccount": refundAccount},
+            success:function(data){//返回json结果
+                // 保存成功
+                if (data.code == 1001) {
+                    layer.msg(data.message, {
+                        offset: '100px',
+                        anim: 4
+                    });
+
+                } else if (data.code == 1002) {
+                    // 保存失败
+                    layer.msg(data.message, {
+                        offset: '100px',
+                        anim: 4
+                    });
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

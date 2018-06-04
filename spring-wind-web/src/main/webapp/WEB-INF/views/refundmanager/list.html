@@ -1,0 +1,58 @@
+#override("title")
+SpringWind - 用户充值记录
+#end
+#override("css")
+<link href="#springUrl('/static/css/plugins/bootstrap-table/bootstrap-table.min.css')" rel="stylesheet">
+#end
+#override("breadcrumb")
+<li><a>充值管理</a></li><li class="active"><strong>用户充值记录</strong></li>
+#end
+#override("content")
+<div class="row">
+	<div class="row">
+		<div class="col-sm-12">
+			<table id="dataTable"></table>
+		</div>
+	</div>
+</div>
+#end
+#override("js")
+<script src="#springUrl('/static/js/plugins/bootstrap-table/bootstrap-table.min.js')"></script>
+<script src="#springUrl('/static/js/plugins/bootstrap-table/bootstrap-table-mobile.min.js')"></script>
+<script src="#springUrl('/static/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js')"></script>
+<script src="#springUrl('/static/plugins/layer-v2.2/layer/layer.js')"></script>
+<script src="#springUrl('/static/js/base_list.js')"></script>
+<script src="#springUrl('/static/js/common.js')"></script>
+<script type="text/javascript">
+    // var dataUrl="#springUrl('/refund/queryRefundByManager')";
+    var dataUrl="#springUrl('/perm/admin/queryRefundByManager')";
+    var dataColumns = [
+	{
+		field: 'userId',
+		title: '退款用户id',
+	},{
+        field: 'refundAmount',
+        title: '退款金额',
+    }, {
+        field: 'refundAccount',
+        title: '收款账号',
+    },{
+        field: 'refundAccountType',
+        title: '收款账号类型',
+    },{
+        field: 'refundTime',
+        title: '申请退款时间',
+	},{
+        field: 'refundStatus',
+        title: '退款状态',
+	}
+    ];
+    function dataQueryParams(params) {
+        return {
+            _size: params.limit,  //页面大小
+            _index: params.offset //页码
+        };
+    }
+</script>
+#end
+#extends("/common/framework.html")

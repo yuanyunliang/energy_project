@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baomidou.springwind.mapper.MeterMapper">
+
+	<!-- 用户所属电表集合 -->
+	<resultMap id="BaseResultMap" type="com.baomidou.springwind.entity.UserMeter">
+		<result column="user_id" property="userId" />
+		<collection property="metersList" ofType="com.baomidou.springwind.entity.MeterInfo">
+			<id column="meter_id" property="meterId" />
+			<result column="meter_address" property="meterAddress" />
+			<result column="meter_online_time" property="meterOnlineTime"/>
+		</collection>
+	</resultMap>
+
+	<!-- 查询用户所属电表 -->
+	<select id="selectMetersByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT
+			m.user_id,
+			mf.meter_id,
+			mf.meter_online_time,
+			mf.meter_address
+		FROM
+			meter m
+		LEFT JOIN
+			meter_info mf
+			ON
+			m.meter_id = mf.meter_id
+		WHERE
+			user_id = ${uid}
+	</select>
+	
+	<select id="getUserIdByMeterId" resultType="java.lang.String" parameterType="java.lang.String">
+		SELECT user_id
+		FROM meter
+		WHERE meter_id = #{id}
+	</select>
+</mapper>

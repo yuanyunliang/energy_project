@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>注册</title>
+		<link rel="stylesheet" href="#springUrl('/static/user/css/reset.css')" />
+		<link rel="stylesheet" href="#springUrl('/static/user/css/common.css')" />
+		<link rel="shortcut icon" href="favicon.ico">
+		<link href="#springUrl('/static/user/css/bootstrap.min14ed.css')?v=3.3.6" rel="stylesheet">
+		<link href="#springUrl('/static/user/css/font-awesome.min93e3.css')?v=4.4.0" rel="stylesheet">
+		<link href="#springUrl('/static/user/css/animate.min.css')" rel="stylesheet">
+		<link href="#springUrl('/static/user/css/style.min862f.css')?v=4.1.0" rel="stylesheet">
+		<!--消息弹框插件 -->
+		<link rel="stylesheet" href="#springUrl('/static/css/plugins/message/messenger.css')" />
+		<link rel="stylesheet" href="#springUrl('/static/css/plugins/message/messenger-theme-future.css')" />
+		<link rel="stylesheet" href="#springUrl('/static/css/plugins/message/messenger-theme-flat.css')" />
+		<link rel="stylesheet" href="#springUrl('/static/user/css/plugins/message/messenger-theme-air.css')" />
+	</head>
+	<body>
+		<div class="wrap login_wrap">
+			<div class="content">
+				<div class="logo"></div>
+				<div class="login_box" >
+					<div class="regist_form">
+						<div class="login_title">
+							注册
+						</div>
+						<div class="ibox-content">
+							<form class="form-horizontal m-t" id="registForm" action="#springUrl('/user/regist')" method="post">
+								<div class="form-group">
+									<label class="col-sm-4 control-label">帐户：</label>
+									<div class="col-sm-8">
+										<input id="account" name="account" class="form-control" type="text" >
+										<div class="accountTip"></div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">用户名/公司名：</label>
+									<div class="col-sm-8">
+										<input id="name" name="name"  class="form-control" type="text" aria-required="true" aria-invalid="true" class="error">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">联系手机：</label>
+									<div class="col-sm-8">
+										<input id="phone" name="phone"  class="form-control" type="text">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">密码：</label>
+									<div class="col-sm-8">
+										<input id="password" name="password" class="form-control" type="password">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">确认密码：</label>
+									<div class="col-sm-8">
+										<input id="confirm_password" name="confirm_password" class="form-control" type="password">
+										<span class="help-block m-b-none"></span>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">选择注册类型：</label>
+									<div class="col-sm-8">
+										<input type="radio" name="type" value="0" checked="checked">普通用户
+										<input type="radio" name="type" value="1">公司企业
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-8 col-sm-offset-2 " >
+										<button class="btn btn-primary" type="submit">提交</button>
+										<div class="col-sm-offset-5 " style="margin-top: 30px;">
+											<span>已有帐号？</span><a href="#springUrl('/user/loginUI')">马上登录</a>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="#springUrl('/static/user/js/jquery-1.6.4.js')?v=2.1.4"></script>
+		<script src="#springUrl('/static/user/js/jquery.min.js')?v=2.1.4"></script>
+		<script src="#springUrl('/static/user/js/bootstrap.min.js')?v=3.3.6"></script>
+		<script src="#springUrl('/static/user/js/content.min.js')?v=1.0.0"></script>
+		<script src="#springUrl('/static/user/js/jquery.validate.min.js')"></script>
+		<script src="#springUrl('/static/user/js/messages_zh.min.js')"></script>
+		<script src="#springUrl('/static/user/js/registValidate.js')"></script>
+		<script type="text/javascript" src="#springUrl('http://tajs.qq.com/stats?sId=9051096')" charset="UTF-8"></script>
+
+		<!--弹窗插件 -->
+		<script src="#springUrl('/static/js/plugins/message/messenger.js')"></script>
+		<script src="#springUrl('/static/js/plugins/message/messenger-theme-future.js')"></script>
+		<script src="#springUrl('/static/js/plugins/message/messenger-theme-flat.js')"></script>
+
+		<!--提示信息-->
+		#if(${result})
+		<script type="text/javascript">
+            $().ready(function(){
+                var success=$!{result.success};
+                var msg='$!{result.msg}';
+                var type="error";
+                if(success == true){
+                    type="success"
+                }
+                Messenger.options = {
+                    extraClasses: 'messenger-fixed messenger-on-top messenger-on-right',
+                    theme: 'future'
+                }
+                $.globalMessenger().post({
+                    message:"提示："+ msg,
+                    type: type,
+                    showCloseButton: true
+                })
+            })
+		</script>
+		#else
+		#end
+	</body>
+</html>
+
+<script type="text/javascript">
+        $("#account").blur(function () {
+            var accountVal = $("#account").val()
+			if (accountVal == "") {
+                $(".accountTip").text(" ");
+                return
+			}
+            $.ajax({
+                "url":"#springUrl('/user/checkRepeat')",
+                "data":{"account":$('#account').val()},
+                "type":"POST",
+                "error" : function (request, textStatus, errorThrown)  {
+                    console.log("readyState" + request.readyState)
+                    console.log("status" + request.status)
+                    console.log("textStatus" + textStatus)
+                },
+                "success":function(data){
+                    if(data.success){
+                        console.log(data.success)
+                        $(".accountTip").text(" ");
+                        return;
+                    }else{
+                        $(".accountTip").text(data.msg);
+                        $(".accountTip").css("color",'red');
+                        return;
+                    }
+                },
+                "dataType":"json"
+            })
+        })
+</script>
+

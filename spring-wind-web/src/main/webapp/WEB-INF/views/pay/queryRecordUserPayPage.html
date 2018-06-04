@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>充值记录</title>
+    <link rel="stylesheet" href="#springUrl('/layui/css/layui.css')">
+</head>
+<body class="layui-layout-body" style="background-color: #f3f3f4;height: 100%">
+
+    <div class="layui-layout layui-layout-admin" >
+        <div class="layui-header">
+            <div class="layui-logo" style="padding-left: 0%">能源链 EnergyChain</div>
+            <!-- 头部区域（可配合layui已有的水平导航） -->
+            <ul class="layui-nav layui-layout-left" style="padding-left: 0%">
+                <li class="layui-nav-item">
+                    <a href="javascript:;">帐户余额管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="#springUrl('/pay/goPayPage')">帐户充值</a></dd>
+                        <dd><a href="#springUrl('/pay/goQueryRecordUserPayPage')">充值记录</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">帐户退款管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="#springUrl('/refund/goApplyRefundPage')">申请退款</a></dd>
+                        <dd><a href="#springUrl('/refund/queryRefundUI')">退款记录</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item"><a href="#springUrl('/userConsume/recordMeterConsumeUI')">模拟用户用电上链</a></li>
+            </ul>
+            <ul class="layui-nav layui-layout-right" style="margin-right: 0%">
+                <li class="layui-nav-item">
+                    <a href="javascript:;">
+                        <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                        贤心
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="">基本资料</a></dd>
+                        <dd><a href="">安全设置</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item"><a href="">退出登录</a></li>
+            </ul>
+        </div>
+
+        <div class="layui-container" >
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>充值记录</legend>
+            </fieldset>
+
+            <input type="hidden" name="payUserId" id="payUserId" value="null"/>
+            <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
+        </div>
+
+    </div>
+    <script src="#springUrl('/layui/layui.js')"></script>
+    <script>
+        var $;
+        var layer;
+        var form;
+        var element;
+        layui.use(['form','jquery','layer','element','table'], function () {
+            // 获取form模块
+            form = layui.form;
+            // 获取layui内置的jquery
+            $ = layui.jquery;
+            layer = layui.layer;
+            element = layui.element;
+            var table = layui.table;
+
+            //方法级渲染
+            table.render({
+                elem: '#LAY_table_user'
+                ,url: "#springUrl('/pay/listRecordUserPay')",
+                where: {
+                    userId: $("#payUserId").val()
+                }
+                ,cols: [[
+                    {field:'payOrderNumber', title: '订单号', sort: true}
+                    ,{field:'payAmount', title: '充值金额', sort: true}
+                    ,{field:'payTime', title: '充值时间', sort: true}
+                    ,{field:'payOrderType', title: '支付方式', sort: true}
+                ]]
+                ,id: 'testReload'
+                ,page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+                    layout: ['count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
+                    ,groups: 3 //只显示 3 个连续页码
+                    ,first: true // 显示首页
+                    ,last: true // 显示尾页
+
+                }
+            });
+
+            var $ = layui.$, active = {
+                reload: function(){
+                    var demoReload = $('#demoReload');
+
+                    //执行重载
+                    table.reload('testReload', {
+                        page: {
+                            curr: 1 //重新从第 1 页开始
+                        }
+                        ,where: {
+                            key: {
+                                id: demoReload.val()
+                            },
+                            userId: $("#payUserId").val()
+                        }
+                    });
+                }
+            };
+
+            $('.demoTable .layui-btn').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+
+        })
+    </script>
+</body>
+</html>

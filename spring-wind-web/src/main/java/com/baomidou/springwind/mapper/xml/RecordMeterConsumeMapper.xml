@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baomidou.springwind.mapper.RecordMeterConsumeMapper" >
+
+    <resultMap id="BaseResultMap" type="com.baomidou.springwind.entity.RecordMeterConsume" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="meter_id" property="meterId" jdbcType="VARCHAR" />
+        <result column="company_id" property="companyId" jdbcType="VARCHAR" />
+        <result column="electricity" property="electricity" jdbcType="DOUBLE" />
+        <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <insert id="saveRecordMeterConsume" parameterType="com.baomidou.springwind.entity.RecordMeterConsume">
+        INSERT INTO
+            record_meter_consume (meter_id,company_id,electricity,start_time,end_time)
+        VALUES
+            (#{meterId},#{companyId},#{electricit},#{startTime},#{endTime})
+    </insert>
+</mapper>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baomidou.springwind.mapper.UserMapper">
+
+    <resultMap type="com.baomidou.springwind.entity.User" id="userResultMap">
+        <id property="id" column="user_id"/>
+        <result property="account" column="user_account"/>
+        <result property="password" column="user_password"/>
+        <result property="freeze" column="is_freeze"/>
+        <result property="type" column="user_type"/>
+        <association property="userInfo" javaType="com.baomidou.springwind.entity.UserInfo">
+            <id property="id" column="user_id"/>
+            <result property="name" column="user_name"/>
+            <result property="phone" column="user_phone"/>
+            <result property="money" column="user_money"/>
+            <result property="companyId" column="company_id"/>
+        </association>
+    </resultMap>
+
+
+    <!-- 通用查询结果列-->
+    <sql id="select">
+        user_id, user_account, user_password, power_company_id, user_type
+    </sql>
+
+    <sql id="infoSelect">
+        u.user_id, i.user_id, u.is_freeze, u.user_account, u.user_type, i.user_phone, i.user_name, i.user_money
+    </sql>
+
+    <insert id="add" parameterType="com.baomidou.springwind.entity.User">
+        INSERT INTO user (user_id, user_account, user_password, user_type)
+        VALUES (#{id}, #{account}, #{password}, #{type})
+    </insert>
+
+    <select id="checkRepeat" parameterType="String" resultType="java.lang.Integer">
+        SELECT COUNT(user_account)
+        FROM user
+        WHERE user_account = #{account}
+    </select>
+
+    <select id="login" parameterType="String" resultMap="userResultMap">
+        SELECT
+            user_id,
+            user_account,
+            user_type,
+            user_password
+        FROM user
+        WHERE user_account = #{account} AND user_password = #{password}
+    </select>
+
+    <select id="getMoney" parameterType="String" resultType="java.lang.Float">
+        SELECT user_money
+        FROM user_info
+        WHERE user_id = #{id}
+    </select>
+
+    <update id="updateMoney">
+        UPDATE user_info
+        SET user_money = #{money}
+        WHERE user_id = #{id}
+    </update>
+
+    <update id="doFreeze" parameterType="java.lang.String">
+        UPDATE user
+        SET is_freeze = #{freeze}
+        WHERE user_id = #{id}
+    </update>
+
+    <select id="selectUsers" resultMap="userResultMap">
+        SELECT
+        <include refid="infoSelect"/>
+        FROM user u left join user_info i on u.user_id = i.user_id WHERE user_type = '0'
+    </select>
+
+    <select id="getType" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT user.user_type
+        FROM user
+        WHERE user_id = #{id}
+    </select>
+</mapper>

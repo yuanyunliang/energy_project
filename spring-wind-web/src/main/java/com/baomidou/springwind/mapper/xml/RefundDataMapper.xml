@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baomidou.springwind.mapper.RefundDataMapper" >
+
+    <resultMap id="BaseResultMap" type="com.baomidou.springwind.entity.RefundData" >
+      <id column="id" property="refundId" jdbcType="INTEGER" />
+      <result column="refund_user_id" property="userId" jdbcType="VARCHAR" />
+      <result column="refund_amount" property="refundAmount" jdbcType="DOUBLE" />
+      <result column="refund_account" property="refundAccount" jdbcType="VARCHAR" />
+      <result column="refund_account_type" property="refundAccountType" jdbcType="CHAR" />
+      <result column="refund_time" property="refundTime" jdbcType="TIMESTAMP" />
+      <result column="refund_status" property="refundStatus" jdbcType="CHAR" />
+    </resultMap>
+
+    <insert id="saveRefundData" parameterType="com.baomidou.springwind.entity.RefundData">
+        INSERT INTO
+            record_user_refund (refund_user_id,refund_amount,refund_account,refund_account_type,refund_time,refund_status)
+        VALUES
+            (#{userId},#{refundAmount},#{refundAccount},#{refundAccountType},#{refundTime},#{refundStatus})
+    </insert>
+
+    <select id="listRefundData"  resultMap="BaseResultMap">
+        SELECT
+            *
+        FROM
+            record_user_refund
+        <where>
+            <if test="userId != null">
+                AND refund_user_id = #{userId}
+            </if>
+        </where>
+
+        limit ${(page - 1) * limit},#{limit}
+    </select>
+
+    <select id="countRefundData" resultType="java.lang.Integer">
+        SELECT
+            count(*)
+        FROM
+            record_user_refund
+        <where>
+            <if test="userId != null">
+                AND refund_user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryAllRefundData" resultMap="BaseResultMap">
+        SELECT
+            *
+        FROM
+            record_user_refund
+        <where>
+            <if test="userId != null">
+                AND refund_user_id = #{userId}
+            </if>
+        </where>
+    </select>
+</mapper>

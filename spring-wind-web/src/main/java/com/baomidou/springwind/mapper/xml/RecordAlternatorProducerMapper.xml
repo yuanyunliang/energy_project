@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baomidou.springwind.mapper.RecordAlternatorProducerMapper">
+
+	<!-- 通用查询映射结果-->
+	<resultMap id="BaseResultMap" type="com.baomidou.springwind.entity.RecordAlternatorProducer">
+		<id column="id" property="id" />
+		<result column="alternator_id" property="alternatorId" />
+		<result column="company_id" property="companyId" />
+		<result column="alternator_address" property="alternatorAddress" />
+		<result column="electricity" property="electricity" />
+		<result column="start_time" property="startTime" />
+		<result column="end_time" property="endTime" />
+	</resultMap>
+
+	<select id="selectAlternatorsProducers" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT
+			rap.id,
+			ai.alternator_address,
+			rap.alternator_id,
+			rap.start_time,
+			rap.electricity,
+			rap.end_time
+		FROM
+			record_alternator_producer rap
+		LEFT JOIN
+			alternator_info ai ON rap.alternator_id = ai.alternator_id
+		WHERE
+			rap.company_id = ${cid}
+	</select>
+
+	<select id="insertOne" parameterType="com.baomidou.springwind.entity.RecordAlternatorProducer">
+		INSERT INTO
+			record_alternator_producer(alternator_id, company_id, electricity, start_time, end_time)
+		VALUES
+			(#{alternatorId}, #{companyId}, #{electricity}, #{startTime}, #{endTime})
+	</select>
+</mapper>

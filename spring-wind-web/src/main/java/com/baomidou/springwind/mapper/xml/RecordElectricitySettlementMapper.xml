@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baomidou.springwind.mapper.RecordElectricitySettlementMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.baomidou.springwind.entity.RecordElectricitySettlement">
+		<id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="meter_id" property="meterId" />
+		<result column="company_id" property="companyId" />
+		<result column="electricity_price" property="electricityPrice" />
+		<result column="amount" property="amount" />
+		<result column="settlement_time" property="settlementTime" />
+	</resultMap>
+
+	<!--<resultMap id="CompanyReports" type="com.baomidou.springwind.entity.CompanyReports">-->
+		<!--<id column="id" property="id" />-->
+		<!--<result column="user_id" property="userId" />-->
+		<!--<result column="meter_id" property="meterId" />-->
+		<!--<result column="company_id" property="companyId" />-->
+		<!--<result column="electricity_price" property="electricityPrice" />-->
+		<!--<result column="amount" property="amount" />-->
+		<!--<result column="settlement_time" property="settlementTime" />-->
+	<!--</resultMap>-->
+	<!--<resultMap id="PersonalReports" type="com.baomidou.springwind.entity.PersonalReports">-->
+		<!--<id column="id" property="id" />-->
+		<!--<result column="user_id" property="userId" />-->
+		<!--<result column="meter_id" property="meterId" />-->
+		<!--<result column="company_id" property="companyId" />-->
+		<!--<result column="electricity_price" property="electricityPrice" />-->
+		<!--<result column="amount" property="amount" />-->
+		<!--<result column="settlement_time" property="settlementTime" />-->
+	<!--</resultMap>-->
+
+	<!-- 通用查询结果列-->
+	<sql id="Base_Column_List">
+		 user_id, meter_id,company_id,electricity_price,electricity_price,amount,settlement_time
+	</sql>
+
+	<!--添加DATE类型要注明,jdbcType=DATE-->
+	<!--<insert id="insertElectricitySettle" parameterType="com.baomidou.springwind.entity.RecordElectricitySettlement">-->
+			<!--INSERT into record_electricity_settlement(user_id,meter_id,company_id,electricity_price,amount,settlement_time)-->
+			<!--VALUES(#{userId},#{meterId},#{companyId},#{electricityPrice},#{amount},#{settlementTime,jdbcType=DATE})-->
+	<!--</insert>-->
+
+	<select id="selectElectricitySettleAll" resultMap="BaseResultMap">
+
+		SELECT
+			record_electricity_settlement.user_id,
+			record_electricity_settlement.company_id,
+			record_electricity_settlement.meter_id,
+			record_electricity_settlement.electricity_price,
+			record_electricity_settlement.amount,
+			record_electricity_settlement.settlement_time,
+		FROM
+			record_electricity_settlement
+	</select>
+
+	<select id="selectElectricitySettleByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+
+		SELECT
+			record_electricity_settlement.user_id,
+			record_electricity_settlement.company_id,
+			record_electricity_settlement.meter_id,
+			record_electricity_settlement.electricity_price,
+			record_electricity_settlement.amount,
+			record_electricity_settlement.settlement_time,
+		FROM
+			record_electricity_settlement
+		<where>
+			user_id = #{userId}
+		</where>
+	</select>
+
+	<select id="selectElectricitySettleByCompanyId" parameterType="java.lang.String" resultMap="BaseResultMap">
+
+		SELECT
+		record_electricity_settlement.user_id,
+		record_electricity_settlement.company_id,
+		record_electricity_settlement.meter_id,
+		record_electricity_settlement.electricity_price,
+		record_electricity_settlement.amount,
+		record_electricity_settlement.settlement_time,
+		FROM
+		record_electricity_settlement
+		<where>
+			company_id = #{userId}
+		</where>
+	</select>
+
+	<!--查询最新电表价格-->
+	<select id="NewestPrice" resultType="java.lang.Double">
+		select electricity_price from electricity_price
+		where set_price_time in
+		(select MAX(set_price_time) from electricity_price)
+	</select>
+
+	<!--&lt;!&ndash;查询公司报表&ndash;&gt;-->
+	<!--<select id="selectCompanyReports" parameterType="String" resultType="">-->
+
+	<!--</select>-->
+	<!--&lt;!&ndash;查询用户报表&ndash;&gt;-->
+	<!--<select id="selectPersonalReports" parameterType="String">-->
+
+	<!--</select>-->
+
+</mapper>

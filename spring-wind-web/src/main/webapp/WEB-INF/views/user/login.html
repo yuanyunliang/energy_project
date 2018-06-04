@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>登录</title>
+		<link rel="stylesheet" href="#springUrl('/static/user/css/reset.css')" />
+		<link rel="stylesheet" href="#springUrl('/static/user/css/common.css')" />
+		<link href="#springUrl('/static/user/css/font-awesome.min93e3.css')?v=4.4.0" rel="stylesheet">
+		<!--消息弹框插件 -->
+		<link rel="stylesheet" href="#springUrl('/static/css/plugins/message/messenger.css')" />
+		<link rel="stylesheet" href="#springUrl('/static/css/plugins/message/messenger-theme-future.css')" />
+		<link rel="stylesheet" href="#springUrl('/static/css/plugins/message/messenger-theme-flat.css')" />
+		<link rel="stylesheet" href="#springUrl('/static/user/css/plugins/message/messenger-theme-air.css')" />
+
+    </head>
+	<body>
+		<!-- <div style="height:20px"></div> -->
+		<div class="wrap login_wrap">
+			<div class="content">
+				<div class="logo"></div>
+				<div class="login_box">
+					<div class="login_form">
+						<div class="login_title">
+							登录
+						</div>
+						<form action="#springUrl('/user/login')" method="post" id="loginForm">
+							<div class="form_text_ipt">
+								<img class="img1" src="#springUrl('/static/user/img/logName.png')" />
+								<input id="account" class="logInput" style="margin-left: 50px;width: 250px;" name="account" type="text" placeholder="请输入帐户">
+							</div>
+							<div class="form_text_ipt">
+								<img class="img1" src="#springUrl('/static/user/img/logPwd.png')" />
+								<input id="password" class="logInput" style="margin-left: 50px;width: 250px;" name="password" type="password" placeholder="请输入密码">
+							</div>
+							<div class="form_btn">
+								<button type="button" id="butSub">登录</button>
+							</div>
+							<div class="form_reg_btn">
+								<span>还没有帐号？</span><a href="#springUrl('/user/registUI')">马上注册</a>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="#springUrl('/static/user/js/jquery.min.js')?v=2.1.4"></script>
+		<!--<script src="#springUrl('/static/user/js/common.js')"></script>-->
+		<script src="#springUrl('/static/user/js/jquery.validate.min.js')"></script>
+		<script src="#springUrl('/static/user/js/loginValidate.js')"></script>
+		<!--弹窗插件 -->
+		<script src="#springUrl('/static/js/plugins/message/messenger.js')"></script>
+		<script src="#springUrl('/static/js/plugins/message/messenger-theme-future.js')"></script>
+		<script src="#springUrl('/static/js/plugins/message/messenger-theme-flat.js')"></script>
+
+        <!--提示信息-->
+		#if(${result})
+            <script type="text/javascript">
+                $().ready(function(){
+                    var success=$!{result.success};
+                    var msg='$!{result.msg}';
+                    var type="error";
+                    if(success == true){
+                        type="success"
+                    }
+                    Messenger.options = {
+                        extraClasses: 'messenger-fixed messenger-on-top messenger-on-right',
+                        theme: 'future'
+                    }
+                    $.globalMessenger().post({
+                        message:"提示："+ msg,
+                        type: type,
+                        showCloseButton: true
+                    })
+                })
+            </script>
+		#else
+		#end
+	</body>
+</html>
+
+

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baomidou.springwind.mapper.CompanyInfoMapper">
+
+    <resultMap id="companyInfoResultMap" type="com.baomidou.springwind.entity.CompanyInfo">
+        <id column="company_id" property="id"/>
+        <result column="company_phone" property="phone"/>
+        <result column="company_account" property="account"/>
+        <result column="company_electricity" property="electricity"/>
+        <result column="company_money" property="money"/>
+    </resultMap>
+
+    <resultMap type="com.baomidou.springwind.entity.User" id="userResultMap">
+        <id property="id" column="user_id"/>
+        <result property="account" column="user_account"/>
+        <result property="password" column="user_password"/>
+        <result property="freeze" column="is_freeze"/>
+        <result property="type" column="user_type"/>
+        <association property="companyInfo" javaType="com.baomidou.springwind.entity.CompanyInfo">
+            <id property="id" column="user_id"/>
+            <result property="name" column="company_name"/>
+            <result property="phone" column="company_phone"/>
+            <result property="electricity" column="company_electricity"/>
+            <result column="company_money" property="money"/>
+        </association>
+    </resultMap>
+
+    <sql id="infoSelect">
+        u.user_id, i.company_id, u.is_freeze, u.user_account, u.user_type, i.company_phone, i.company_name, i.company_electricity, i.company_money
+    </sql>
+
+    <insert id="add" parameterType="com.baomidou.springwind.entity.CompanyInfo">
+        INSERT INTO company_info (company_id, company_phone, company_name) VALUES (#{id}, #{phone}, #{name})
+    </insert>
+
+    <select id="getElectricity" parameterType="String" resultType="java.lang.Double">
+        SELECT company_electricity
+        FROM company_info
+        WHERE company_id = #{id}
+    </select>
+
+    <select id="selectCompanys" resultMap="userResultMap">
+        SELECT
+        <include refid="infoSelect"/>
+        FROM user u left join company_info i on u.user_id = i.company_id WHERE user_type = '1'
+    </select>
+
+    <select id="getMoney" resultType="Double" parameterType="String">
+        SELECT company_money
+        FROM company_info
+        WHERE company_id = #{id}
+    </select>
+
+    <update id="updateMoney">
+        UPDATE company_info
+        SET company_money = #{money}
+        WHERE company_id = #{id}
+    </update>
+</mapper>

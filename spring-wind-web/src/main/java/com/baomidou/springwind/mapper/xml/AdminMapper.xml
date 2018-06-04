@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baomidou.springwind.mapper.AdminMapper">
+
+	<!-- 通用查询结果列-->
+	<sql id="Base_Column_List">
+		 id, loginName, password, email, type, status, crTime, lastTime
+	</sql>
+
+
+	<resultMap id="AdminInfoResultMap" type="com.baomidou.springwind.entity.AdminInfo">
+		<id column="id" property="id"/>
+		<result column="loginName" property="loginName"/>
+		<result column="password" property="password"/>
+		<result column="email" property="email"/>
+		<result column="type" property="type"/>
+		<result column="status" property="status"/>
+		<result column="crTime" property="crTime"/>
+		<result column="lastTime" property="lastTime"/>
+	</resultMap>
+
+	<select id="login" resultMap="AdminInfoResultMap" parameterType="java.lang.String">
+		SELECT id, loginName, password FROM admin_info WHERE loginName = #{loginName} AND password = #{password}
+	</select>
+
+	<insert id="add" parameterType="com.baomidou.springwind.entity.AdminInfo" >
+		INSERT INTO admin_info(id, loginName, password, email, type, status, crTime, lastTime)
+		VALUES (#{id}, #{loginName}, #{password}, #{email}, #{type}, #{status}, #{crTime}, #{lastTime})
+	</insert>
+
+	<select id="selectById" resultMap="AdminInfoResultMap" parameterType="java.lang.Long">
+		SELECT <include refid="Base_Column_List"/> FROM admin_info WHERE id = #{id}
+	</select>
+
+	<select id="udpateMoney" resultType="java.lang.Integer">
+		UPDATE user_info SET user_money = #{money} 
+	</select>
+
+	<select id="checkName" resultMap="AdminInfoResultMap">
+		SELECT loginName FROM admin_info WHERE loginName = #{loginName}
+	</select>
+
+</mapper>

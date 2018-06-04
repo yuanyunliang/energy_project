@@ -1,0 +1,4 @@
+spring-wind-web/target/
+spring-wind-core/target/
+.idea/
+*.iml

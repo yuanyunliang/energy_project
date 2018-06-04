@@ -1,0 +1,63 @@
+#override("title")
+SpringWind - 用户电表归属表
+#end
+#override("css")
+<link href="#springUrl('/static/css/plugins/bootstrap-table/bootstrap-table.min.css')" rel="stylesheet">
+#end
+#override("breadcrumb")
+<li><a>用电</a></li><li class="active"><strong>用户电表归属表</strong></li>
+#end
+#override("content")
+<div class="row">
+    <div class="row">
+        <div class="col-sm-12">
+            <table id="dataTable"></table>
+        </div>
+    </div>
+</div>
+#end
+#override("js")
+<script src="#springUrl('/static/js/plugins/bootstrap-table/bootstrap-table.min.js')"></script>
+<script src="#springUrl('/static/js/plugins/bootstrap-table/bootstrap-table-mobile.min.js')"></script>
+<script src="#springUrl('/static/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js')"></script>
+<script src="#springUrl('/static/plugins/layer-v2.2/layer/layer.js')"></script>
+<script src="#springUrl('/static/js/base_list.js')"></script>
+<script src="#springUrl('/static/js/common.js')"></script>
+<script type="text/javascript">
+    var dataUrl="#springUrl('/meter/get')";
+    var dataColumns = [{
+        field: 'meterId',
+        title: '电表ID'
+    }, {
+        field: 'meterAddress',
+        title: '电表地址'
+    },{
+        field: 'meterOnlineTime',
+        title: '电表上线时间',
+        formatter: function (value, row, index) {
+            return formatDate(value);
+        }
+    }, {
+        title: '操作',
+        formatter: function (value, row, index) {
+            var id = row.meterId;
+            return '<a class="btn btn-xs btn-primary" onclick="check(' + "'" + id + "'" + ')"><i class="fa fa-pencil"></i>查看</a> ';
+        }
+    }];
+    function dataQueryParams(params) {
+        return {
+            _size: params.limit,  //页面大小
+            _index: params.offset //页码
+        };
+    }
+    function check(id) {
+        //询问框
+        layer.confirm(id, {
+            btn: ['确定', '取消'] //按钮
+        }, function () {
+            return;
+        });
+    }
+</script>
+#end
+#extends("/common/framework.html")
